@@ -273,6 +273,9 @@ crypto_libbitcoin_crypto_a_SOURCES = \
   crypto/yespower/yespower-opt.c \
   crypto/yespower-bitzeny.c
 
+noinst_HEADERS = \
+  crypto/yespower/insecure_memzero.h
+
 if EXPERIMENTAL_ASM
 crypto_libbitcoin_crypto_a_SOURCES += crypto/sha256_sse4.cpp
 endif
