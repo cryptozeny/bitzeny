@@ -65,6 +65,10 @@ unsigned int static DarkGravityWaveZeny(const CBlockIndex* pindexLast, const Con
     const arith_uint256 bnPowLimit = UintToArith256(params.powLimit);
     int64_t nPastBlocks = 24;
 
+    // Just return when the chain doesn't expect re-targeting
+    if (params.fPowNoRetargeting)
+        return bnPowLimit.GetCompact();
+
     // make sure we have at least (nPastBlocks + 1) blocks, otherwise just return powLimit
     if (!pindexLast || pindexLast->nHeight <= nPastBlocks) { // BitZeny legacy
         return bnPowLimit.GetCompact();
