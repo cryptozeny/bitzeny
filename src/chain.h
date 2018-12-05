@@ -7,7 +7,6 @@
 #define BITCOIN_CHAIN_H
 
 #include "arith_uint256.h"
-#include "hashdb.h"
 #include "primitives/block.h"
 #include "pow.h"
 #include "tinyformat.h"
@@ -295,6 +294,11 @@ public:
         return *phashBlock;
     }
 
+    uint256 GetBlockPoWHash() const
+    {
+        return GetBlockHeader().GetPoWHash();
+    }
+
     int64_t GetBlockTime() const
     {
         return (int64_t)nTime;
@@ -417,9 +421,7 @@ public:
         block.nTime           = nTime;
         block.nBits           = nBits;
         block.nNonce          = nNonce;
-
-        assert(phashdb != nullptr); // FIXME: Benchmark and tests don't initialize hash database
-        return phashdb->GetHash(block);
+        return block.GetHash();
     }
 
     std::string ToString() const

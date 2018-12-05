@@ -10,9 +10,33 @@
 #include "utilstrencodings.h"
 #include "crypto/common.h"
 
+#include <stdlib.h>
+#include "crypto/yespower/yespower.h"
+#include "streams.h"
+#include "version.h"
+
 uint256 CBlockHeader::GetHash() const
 {
-    return SerializeHashYespower(*this);
+    return SerializeHash(*this);
+}
+
+uint256 CBlockHeader::GetPoWHash() const
+{
+    uint256 thash;
+    CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
+    ss << *this;
+    // yespower_params_t yespower_0_5_bitzeny = {YESPOWER_0_5, 2048, 8, "Client Key", 10};
+    yespower_params_t yespower_0_5_bitzeny = {
+        .version = YESPOWER_0_5, 
+        .N = 2048, 
+        .r = 8, 
+        .pers = (const uint8_t *)"Client Key",
+        .perslen = 10
+    };
+    if (yespower_tls((unsigned char *)&ss[0], ss.size(), &yespower_0_5_bitzeny, (yespower_binary_t *)&thash)) {
+        abort();
+    }
+    return thash;
 }
 
 std::string CBlock::ToString() const
